@@ -1,6 +1,17 @@
-# @scuton/retry-fn
+<div align="center">
 
-Retry any async function with exponential backoff. Zero dependencies. TypeScript first.
+# retry-fn
+
+**Retry any async function with exponential backoff. Zero dependencies.**
+
+[![npm](https://img.shields.io/npm/v/@scuton/retry-fn?style=flat-square)](https://www.npmjs.com/package/@scuton/retry-fn)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178c6?style=flat-square)](https://www.typescriptlang.org/)
+[![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen?style=flat-square)](package.json)
+
+</div>
+
+---
 
 ## Install
 
@@ -13,28 +24,33 @@ npm install @scuton/retry-fn
 ```typescript
 import { retry } from '@scuton/retry-fn';
 
-const data = await retry(() => fetch('https://api.example.com/data'), {
-  retries: 3,
+// Simple
+const data = await retry(() => fetch('/api/data'));
+
+// With options
+const data = await retry(() => fetch('/api/data'), {
+  retries: 5,
   delay: 1000,
   backoff: 2,
   maxDelay: 10000,
+  timeout: 5000,
+  retryOn: (err) => err.message !== 'AUTH_FAILED',
   onRetry: (err, attempt) => console.log(`Attempt ${attempt} failed`),
 });
 ```
 
-## API
+## Options
 
-### `retry<T>(fn: () => Promise<T>, options?: RetryOptions): Promise<T>`
-
-Options:
-- `retries` — max retry count (default: 3)
-- `delay` — initial delay in ms (default: 1000)
-- `backoff` — exponential factor (default: 2)
-- `maxDelay` — maximum delay cap in ms (default: 30000)
-- `timeout` — per-attempt timeout in ms
-- `retryOn` — filter function: `(error) => boolean`
-- `onRetry` — callback: `(error, attempt) => void`
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `retries` | `number` | `3` | Max retry count |
+| `delay` | `number` | `1000` | Initial delay (ms) |
+| `backoff` | `number` | `2` | Exponential factor |
+| `maxDelay` | `number` | `30000` | Maximum delay cap (ms) |
+| `timeout` | `number` | — | Per-attempt timeout (ms) |
+| `retryOn` | `(error) => boolean` | — | Filter which errors to retry |
+| `onRetry` | `(error, attempt) => void` | — | Callback on each retry |
 
 ## License
 
-MIT © Scuton Technology
+MIT — [Scuton Technology](https://scuton.com)
